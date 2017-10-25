@@ -1,0 +1,23 @@
+{
+  "name": "bappenas-sdg",
+  "version": "0.0.1",
+  "description": "Dashboard SDG for Bappenas",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "light-server -s . -p 3000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mahdanahmad/bappenas-sdg.git"
+  },
+  "keywords": [
+    "dashboard"
+  ],
+  "author": "Mahdan Ahmad",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mahdanahmad/bappenas-sdg/issues"
+  },
+  "homepage": "https://github.com/mahdanahmad/bappenas-sdg#readme"
+}
