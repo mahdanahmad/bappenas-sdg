@@ -32,6 +32,7 @@
 
         <script src="/js/map.js"></script>
         <script src="/js/barchart.js"></script>
+        <script src="/js/linechart.js"></script>
         <script src="/js/main.js"></script>
         <!-- <script type="text/javascript">
             moment.locale('id');
@@ -57,21 +58,28 @@
                     <div id="barchart-container" class="float-left">
                         <div id="barchart-tooltip" class="hidden">Nilai: <span id="barchart-tooltip-value">0</span></div>
                     </div>
-                    <div id="map-container" class="float-right">
-                        <div id="map-tooltip" class="hidden">
-                            <div id="map-tooltip-prov"></div>
-                            <div>Nilai: <span id="map-tooltip-value">0</span></div>
+                    <div id="map-wrapper" class="float-right">
+                        <div id="map-container">
+                            <div id="map-tooltip" class="hidden">
+                                <div id="map-tooltip-prov"></div>
+                                <div>Nilai: <span id="map-tooltip-value">0</span></div>
+                            </div>
+                        </div>
+                        <div id="ikhtisar-container" class="hidden">
+                            <div class="ikhtisar-wrapper">
+                                <label>5 Goal Terprogresif</label>
+                                <span id="ikhtisar-goals"></span>
+                            </div>
+                            <div class="ikhtisar-wrapper">
+                                <label>5 Provinsi Terprogresif</label>
+                                <span id="ikhtisar-provinces"></span>
+                            </div>
                         </div>
                     </div>
-                    <div id="ikhtisar-container" class="float-right">
-                        <div class="ikhtisar-wrapper">
-                            <label>5 Goal Terprogresif</label>
-                            <span id="ikhtisar-goals"></span>
-                        </div>
-                        <div class="ikhtisar-wrapper">
-                            <label>5 Provinsi Terprogresif</label>
-                            <span id="ikhtisar-provinces"></span>
-                        </div>
+                    <div id="detil-wrapper" class="float-right hidden" onclick="backToMap()">
+                        <div id="back-button" class="cursor-pointer">Kembali ke capaian nasional</div>
+                        <div id="province-name"></div>
+                        <div id="linechart-container"></div>
                     </div>
                 </div>
             </div>

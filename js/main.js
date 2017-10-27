@@ -40,8 +40,11 @@ $( document ).ready(function() {
 		createBarChart(data);
 		createMap(data);
 
+		$('#ikhtisar-container').show();
 		$('#ikhtisar-goals').html(_.take(sdgs_list, 5).join(', '));
 		$('#ikhtisar-provinces').html(_.take(provs, 5).join(', '));
+
+		createLineChart("Aceh");
 	}, 100);
 
 });

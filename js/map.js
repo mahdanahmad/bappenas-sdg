@@ -59,7 +59,8 @@ function createMap(data) {
 				d3.select("#map-tooltip").classed("hidden", false);
 
 			})
-			.on("mouseout", () => { d3.select("#map-tooltip").classed("hidden", true).classed("top", false).classed("down", false); });;
+			.on("mouseout", () => { d3.select("#map-tooltip").classed("hidden", true).classed("top", false).classed("down", false); })
+			.on("click", (o) => { createLineChart(o.properties.nm_provinsi); });
 
         svg.append("path")
             .datum(topojson.mesh(idn, idn.objects.map, (a, b) => (a !== b)))

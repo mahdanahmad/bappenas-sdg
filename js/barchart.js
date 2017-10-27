@@ -46,7 +46,8 @@ function createBarChart(data) {
 			d3.select("#barchart-tooltip").classed("hidden", false);
 
 		})
-		.on("mouseout", () => { d3.select("#barchart-tooltip").classed("hidden", true).classed("top", false).classed("down", false); });
+		.on("mouseout", () => { d3.select("#barchart-tooltip").classed("hidden", true).classed("top", false).classed("down", false); })
+		.on("click", (o) => { createLineChart(o.name); });
 
 
 	let transition	= d3.transition()
@@ -55,7 +56,6 @@ function createBarChart(data) {
 
 	svg.selectAll(".bar").transition(transition)
         .attr("width", (o) => (x(o.value)));
-        // .attr("transform", (d) => ("translate("+[x(d.name), y(d.value)]+")"));
 
 	svg.append("g").call(d3.axisLeft(y).tickSize(0));
 }
