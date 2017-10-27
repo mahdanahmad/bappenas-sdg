@@ -4,7 +4,7 @@ function createBarChart(data) {
 
 	let provHeight		= 20;
 
-	let margin 			= { top: 15, right: 25, bottom: 15, left: 140 };
+	let margin 			= { top: 15, right: 25, bottom: 15, left: 150 };
 	let width			= canvasWidth - margin.right - margin.left;
 	let height			= provHeight * data.length;
 	// let height			= canvasHeight - margin.top - margin.bottom;
@@ -27,7 +27,8 @@ function createBarChart(data) {
 			.data(data)
 	    .enter().append("rect")
 			.attr("class", "bar")
-			.attr("width", (o) => (x(o.value)))
+			// .attr("width", (o) => (x(o.value)))
+			.attr("width", 0)
 			.attr("y", (o) => (y(o.name)))
 			.attr("height", y.bandwidth())
 		.on("mouseover", function(o) {
@@ -46,6 +47,15 @@ function createBarChart(data) {
 
 		})
 		.on("mouseout", () => { d3.select("#barchart-tooltip").classed("hidden", true).classed("top", false).classed("down", false); });
+
+
+	let transition	= d3.transition()
+        .duration(750)
+        .ease(d3.easeLinear);
+
+	svg.selectAll(".bar").transition(transition)
+        .attr("width", (o) => (x(o.value)));
+        // .attr("transform", (d) => ("translate("+[x(d.name), y(d.value)]+")"));
 
 	svg.append("g").call(d3.axisLeft(y).tickSize(0));
 }

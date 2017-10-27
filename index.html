@@ -17,7 +17,7 @@
         <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
         <link rel="shortcut icon" type="image/x-icon" href="/public/favicon.ico">
 
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css">
+        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css"> -->
 
         <link rel="stylesheet" href="/stylesheets/css/main.css">
 
@@ -25,10 +25,12 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js"></script> -->
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.11.0/d3.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
 
+        <script src="/js/map.js"></script>
         <script src="/js/barchart.js"></script>
         <script src="/js/main.js"></script>
         <!-- <script type="text/javascript">
@@ -52,8 +54,24 @@
                     <select id="indikator-selector" class="float-right"></select>
                 </div>
                 <div id="chart-wrapper">
-                    <div id="barchart-container">
+                    <div id="barchart-container" class="float-left">
                         <div id="barchart-tooltip" class="hidden">Nilai: <span id="barchart-tooltip-value">0</span></div>
+                    </div>
+                    <div id="map-container" class="float-right">
+                        <div id="map-tooltip" class="hidden">
+                            <div id="map-tooltip-prov"></div>
+                            <div>Nilai: <span id="map-tooltip-value">0</span></div>
+                        </div>
+                    </div>
+                    <div id="ikhtisar-container" class="float-right">
+                        <div class="ikhtisar-wrapper">
+                            <label>5 Goal Terprogresif</label>
+                            <span id="ikhtisar-goals"></span>
+                        </div>
+                        <div class="ikhtisar-wrapper">
+                            <label>5 Provinsi Terprogresif</label>
+                            <span id="ikhtisar-provinces"></span>
+                        </div>
                     </div>
                 </div>
             </div>
