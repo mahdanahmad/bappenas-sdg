@@ -14,29 +14,22 @@
         <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
         <meta http-equiv="pragma" content="no-cache" />
 
-        <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
-        <link rel="shortcut icon" type="image/x-icon" href="/public/favicon.ico">
+        <link rel="icon" type="image/x-icon" href="public/favicon.ico">
+        <link rel="shortcut icon" type="image/x-icon" href="public/favicon.ico">
 
-        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css"> -->
-
-        <link rel="stylesheet" href="/stylesheets/css/main.css">
+        <link rel="stylesheet" href="stylesheets/css/main.css">
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js"></script> -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
-
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js"></script> -->
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.11.0/d3.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
 
-        <script src="/js/map.js"></script>
-        <script src="/js/barchart.js"></script>
-        <script src="/js/linechart.js"></script>
-        <script src="/js/main.js"></script>
-        <!-- <script type="text/javascript">
-            moment.locale('id');
-        </script> -->
+        <script src="js/map.js"></script>
+        <script src="js/barchart.js"></script>
+        <script src="js/linechart.js"></script>
+        <script src="js/main.js"></script>
     </head>
     <body class="">
         <div id="root">
@@ -52,7 +45,7 @@
                 <div id="sdg-wrapper"></div>
                 <div id="indikator-wrapper">
                     <span id="selected-sdg"></span>
-                    <select id="indikator-selector" class="float-right"></select>
+                    <select id="indikator-selector" class="float-right" onchange="indClicked(this)"></select>
                 </div>
                 <div id="chart-wrapper">
                     <div id="barchart-container" class="float-left">
@@ -80,6 +73,12 @@
                         <div id="back-button" class="cursor-pointer">Kembali ke capaian nasional</div>
                         <div id="province-name"></div>
                         <div id="linechart-container"></div>
+                    </div>
+                    <div id="content-overlay">
+                        <div id="content-overlay-notif">
+                            <img src="public/images/cursor.png">
+                            <div>Silakan pilih indikator terlebih dahulu.</div>
+                        </div>
                     </div>
                 </div>
             </div>

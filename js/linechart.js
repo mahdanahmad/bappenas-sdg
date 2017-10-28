@@ -19,7 +19,7 @@ function createLineChart(name) {
 
 			let labels			= ["2010", "2011", "2012", "2013", "2014", "2015", "2016"];
 
-			let data			= _.times(labels.length, (i) => ({ year: labels[i], value: _.random(10) }));
+			let data			= _.times(labels.length, (i) => ({ year: labels[i], value: (ind_data[name][labels[i]] || null) }));
 
 			let x				= d3.scaleBand().range([0, width]).domain(labels);
 			let y				= d3.scaleLinear().range([height, 0]).domain([0, d3.max(data, (o) => (o.value)) + 1]);

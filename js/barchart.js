@@ -1,4 +1,6 @@
 function createBarChart(data) {
+	d3.select("#barchart-container").selectAll("svg").remove();
+
 	let canvasWidth		= $('#barchart-container').outerWidth(true);
 	let canvasHeight	= $('#barchart-container').outerHeight(true);
 

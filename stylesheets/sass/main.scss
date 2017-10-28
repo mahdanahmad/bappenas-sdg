@@ -34,7 +34,7 @@ div#root {
 
         $header-high	: 50px;
 
-        #header-title { line-height: $header-high; font-weight: bolder; font-size: 28px; }
+        #header-title { line-height: $header-high; font-size: 28px; font-family: "SF Bold"; }
         ul#header-menu { li { line-height: $header-high; display: inline-block; min-width: 75px; text-align: center; cursor: pointer; &:hover { background: rgba(0, 0, 0, .1)} } }
     }
 	#content-wrapper {
@@ -103,7 +103,7 @@ div#root {
 					width: 100%; position: absolute; @include clearfix(); bottom: 15px;
 					.ikhtisar-wrapper {
 						padding: 0px 1%; width: 48%; display: inline-block; float: left;
-						label { display: block; font-weight: bolder; margin-bottom: 5px; }
+						label { display: block; margin-bottom: 5px; font-family: "SF Bold"; }
 						span {  }
 					}
 				}
@@ -113,13 +113,21 @@ div#root {
 				width: 75%;
 				height: 100%; position: relative;
 				#back-button { background: #262c30; position: absolute; right: 0px; top: -50px; padding: 12px 20px; }
-				#province-name { font-weight: bolder; font-size: 25px; padding: 10px 25px; }
+				#province-name { font-size: 25px; padding: 10px 25px; font-family: "SF Bold"; }
 				#linechart-container { width: 100%; }
 				svg {
 					.axis line, .axis path { stroke: white; }
 					.axis text { fill: white; }
 					.line { fill: none; stroke: #fff7a8; stroke-width: 3 }
 					.dot { fill: $default-back; stroke: #fff7a8; stroke-width: 3; }
+				}
+			}
+			#content-overlay {
+				width: 100%; height: 100%; position: absolute; top: 0px; left: 0px; background: rgba(0,0,0,.6);
+				#content-overlay-notif {
+					margin: 15% auto 0; width: 25%;
+					img { width: 25%; height: auto; margin: auto; display: block; }
+					div { text-align: center; width: 100%; margin-top: 15px; }
 				}
 			}
 		}

@@ -1,4 +1,6 @@
 function createMap(data) {
+	d3.select("#map-container").selectAll("svg").remove();
+
 	let canvasWidth		= $('#map-container').outerWidth(true);
 	let canvasHeight	= $('#map-container').outerHeight(true);
 

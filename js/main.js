@@ -1,8 +1,12 @@
-let defaultOpt	= "<option value='' disabled selected hidden>Pilih Indikator</option>";
-let noOpt		= "<option value='' disabled>Tidak Ada data tersedia untuk tujuan ini</option>";
+const proxyurl 		= "https://cors-anywhere.herokuapp.com/";
+const baseURL		= "http://hub.satudata.bappenas.go.id/api/action/datastore_search?resource_id=";
+const mainURL		= baseURL + "14683ee3-f49c-4c58-a83c-593dbbe4157a";
 
-let provs		= ["Bali", "Banten", "Bengkulu", "Daerah Istimewa Yogyakarta", "DKI Jakarta", "Gorontalo", "Jambi", "Jawa Barat", "Jawa Tengah", "Jawa Timur", "Kalimantan Barat", "Kalimantan Selatan", "Kalimantan Tengah", "Kalimantan Timur", "Kalimantan Utara", "Kepulauan Bangka Belitung", "Kepulauan Riau", "Lampung", "Maluku", "Maluku Utara", "Nangroe Aceh Darussalam", "Nusa Tenggara Barat", "Nusa Tenggara Timur", "Papua", "Papua Barat", "Riau", "Sulawesi Barat", "Sulawesi Selatan", "Sulawesi Tengah", "Sulawesi Tenggara", "Sulawesi Utara", "Sumatera Barat", "Sumatera Selatan", "Sumatera Utara"]
-let sdgs_list	= [
+const defaultOpt	= "<option value='' disabled selected hidden>Pilih Indikator</option>";
+const noOpt			= "<option value='' disabled>Tidak Ada data tersedia untuk tujuan ini</option>";
+
+const provs			= ["Aceh", "Bali", "Banten", "Bengkulu", "DI Yogyakarta", "DKI Jakarta", "Gorontalo", "Jambi", "Jawa Barat", "Jawa Tengah", "Jawa Timur", "Kalimantan Barat", "Kalimantan Selatan", "Kalimantan Tengah", "Kalimantan Timur", "Kalimantan Utara", "Kepulauan Bangka Belitung", "Kepulauan Riau", "Lampung", "Maluku", "Maluku Utara", "Nusa Tenggara Barat", "Nusa Tenggara Timur", "Papua", "Papua Barat", "Riau", "Sulawesi Barat", "Sulawesi Selatan", "Sulawesi Tengah", "Sulawesi Tenggara", "Sulawesi Utara", "Sumatera Barat", "Sumatera Selatan", "Sumatera Utara"];
+const sdgs_list		= [
 	"Tidak ada kemiskinan",
 	"Tidak ada kelaparan",
 	"Kesehatan yang baik",
@@ -22,8 +26,14 @@ let sdgs_list	= [
 	"Kemitraan untuk tujuan",
 ];
 
+const def_data		= _.chain(provs).map((o) => ({ name: o, value: 0 })).orderBy('name', 'desc').value();
+
+let avail_inds	= [];
+let avail_data	= {};
+let ind_data	= {};
+let sgd_active	= "";
+
 $( document ).ready(function() {
-	let sgd_active	= _.head(sdgs_list);
 
 	$('#sdg-wrapper').html(_.map(sdgs_list, (o, i) => ("<div class='sdg-container cursor-pointer' onclick=\"sdgClicked(this, '" + o + "')\">" +
 		"<img src='/public/images/sdgs_logo/" + (i + 1) + ".png'/>" +
@@ -35,25 +45,56 @@ $( document ).ready(function() {
 	setTimeout(function() {
 		$('#chart-wrapper').height($('#root').outerHeight( true ) - $('#header').outerHeight( true ) - $('#sdg-wrapper').outerHeight( true ) - $('#indikator-wrapper').outerHeight( true ));
 
-		let data	= _.chain(provs).map((o) => ({ name: o, value: _.random(10) })).sortBy('value').value();
+		createBarChart(def_data);
+		createMap(def_data);
 
-		createBarChart(data);
-		createMap(data);
+		$.get( proxyurl + mainURL, ( data ) => {
+			avail_data	= _.chain(data).get('result.records', []).filter((o) => (o.status == 'Tersedia' && !_.isEmpty(o.resource_id))).groupBy('tujuan').value();
+			avail_inds	= _.chain(avail_data).keys().map(_.toInteger).value();
 
-		$('#ikhtisar-container').show();
-		$('#ikhtisar-goals').html(_.take(sdgs_list, 5).join(', '));
-		$('#ikhtisar-provinces').html(_.take(provs, 5).join(', '));
-
-		createLineChart("Aceh");
+			$('#ikhtisar-goals').text(_.chain(avail_data).map((o, key) => ({ tujuan: key, total: o.length })).orderBy('total', 'desc').take(5).map((o) => (sdgs_list[_.toInteger(o.tujuan - 1)])).join(', ').value());
+		});
 	}, 100);
 
 });
 
 function sdgClicked(elem, name) {
-	$('.sdg-container.active').removeClass('active');
-	$(elem).addClass('active');
-	$('#selected-sdg').text(name);
+	if (!_.isEmpty(avail_inds) && sgd_active !== name) {
+		backToMap();
+		createBarChart(def_data);
+		createMap(def_data);
+		$('#ikhtisar-container').hide();
+		$('#content-overlay').show();
 
-	let indicators	= _.chain(5).random().times((o) => ("indikator " + (o + 1))).value();
-	$('#indikator-selector').html(defaultOpt + (indicators.length > 0 ? _.map(indicators, (o) => ('<option>' + o + '</option>')) : noOpt ));
+		$('.sdg-container.active').removeClass('active');
+		$(elem).addClass('active');
+		$('#selected-sdg').text(name);
+
+		sgd_active	= name;
+
+		let selected_goal	= _.indexOf(sdgs_list, name) + 1;
+		if (_.indexOf(avail_inds, selected_goal) >= 0) {
+			$('#indikator-selector').html(defaultOpt + _.map(avail_data[selected_goal], (o) => ("<option value='" + o.resource_id + "'>" + o.nama_indikator + "</option>")).join(""));
+		} else {
+			$('#indikator-selector').html(defaultOpt + noOpt);
+		}
+	}
+}
+
+function indClicked(elem) {
+	$.get( proxyurl + baseURL + elem.value, ( data ) => {
+		let accepted_data	= _.chain(data).get('result.records', []).filter((o) => (_.indexOf(provs, o.disagregasi) >= 0)).value();
+		let shown_years		= _.chain(accepted_data).uniqBy('tahun').map('tahun').maxBy(_.toInteger).value();
+		let shown_data		= _.chain(accepted_data).filter(['tahun', shown_years]).map((o) => ({ name: o.disagregasi, value: parseFloat(o.nilai) })).value();
+
+		ind_data			= _.chain(accepted_data).groupBy('disagregasi').mapValues((o) => (_.chain(o).keyBy('tahun').mapValues((o) => (parseFloat(o.nilai))).value())).value();
+
+		$('#content-overlay').hide();
+
+		createBarChart(_.sortBy(shown_data, 'value'));
+		createMap(shown_data);
+
+		$('#ikhtisar-provinces').text(_.chain(ind_data).map((o, key) => ({ prov: key, total: _.chain(o).values().sum().value() })).orderBy('total', 'desc').take(5).map('prov').join(', ').value());
+		$('#ikhtisar-container').show();
+	});
 }
