@@ -19,7 +19,7 @@ function createMap(data) {
     	.attr("width", width)
         .attr("height", height);
 
-	d3.json("/public/indonesia.json", function(err, idn) {
+	d3.json("public/indonesia.json", function(err, idn) {
 		if (err) return console.error(err);
 
 		let states	= topojson.feature(idn, idn.objects.map);

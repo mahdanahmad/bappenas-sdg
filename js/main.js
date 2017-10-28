@@ -36,7 +36,7 @@ let sgd_active	= "";
 $( document ).ready(function() {
 
 	$('#sdg-wrapper').html(_.map(sdgs_list, (o, i) => ("<div class='sdg-container cursor-pointer' onclick=\"sdgClicked(this, '" + o + "')\">" +
-		"<img src='/public/images/sdgs_logo/" + (i + 1) + ".png'/>" +
+		"<img src='public/images/sdgs_logo/" + (i + 1) + ".png'/>" +
 		"<div class='sdg-overlay'></div>" +
 	"</div>")));
 
