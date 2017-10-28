@@ -100,13 +100,14 @@ div#root {
 					}
 				}
 				#ikhtisar-container {
-					width: 100%; position: absolute; @include clearfix(); bottom: 15px;
+					width: 75%; position: absolute; @include clearfix(); bottom: 20px;
 					.ikhtisar-wrapper {
 						padding: 0px 1%; width: 48%; display: inline-block; float: left;
 						label { display: block; margin-bottom: 5px; font-family: "SF Bold"; }
 						span {  }
 					}
 				}
+				img { width: 20%; height: auto; position: absolute; bottom: 15px; right: 0px; }
 			}
 			#detil-wrapper {
 				// width: calc(100% - 400px);
