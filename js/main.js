@@ -70,7 +70,7 @@ function sdgClicked(elem, name) {
 
 		$('.sdg-container.active').removeClass('active');
 		$(elem).addClass('active');
-		$('#selected-sdg').text(name);
+		$('#selected-sdg').text('Goal ' + (_.indexOf(sdgs_list, name) + 1) + ': ' + name);
 
 		sgd_active	= name;
 
@@ -91,7 +91,7 @@ function indClicked(elem) {
 		let shown_years		= _.chain(accepted_data).uniqBy('tahun').map('tahun').maxBy(_.toInteger).value();
 		let shown_data		= _.chain(accepted_data).filter(['tahun', shown_years]).map((o) => ({ name: o.disagregasi, value: parseFloat(o.nilai) })).value();
 
-		ind_data			= _.chain(accepted_data).groupBy('disagregasi').mapValues((o) => (_.chain(o).keyBy('tahun').mapValues((d) => (_.toInteger(d.nilai))).value())).value();
+		ind_data			= _.chain(accepted_data).groupBy('disagregasi').mapValues((o) => (_.chain(o).keyBy('tahun').mapValues((d) => (parseFloat(d.nilai))).value())).value();
 		current_max			= _.chain(accepted_data).maxBy((o) => (_.toInteger(o.nilai))).get('nilai', 0).toInteger().ceil().multiply(1.10).value();
 
 		$('#content-overlay').hide();

@@ -46,9 +46,9 @@ function createLineChart(name) {
 				.call(d3.axisLeft(y).ticks(5));
 
 			svg.append("g")
-			.attr("class", "grid")
-			// .attr("transform", "translate(0," + height + ")")
-			.call(d3.axisLeft(y).ticks(5).tickSize(-width).tickFormat(""));
+				.attr("class", "grid")
+				// .attr("transform", "translate(0," + height + ")")
+				.call(d3.axisLeft(y).ticks(5).tickSize(-width).tickFormat(""));
 
 			svg.append("path")
 			    .datum(data)
@@ -56,7 +56,6 @@ function createLineChart(name) {
 			    .attr("d", line)
 				.attr("stroke-dasharray", function (d) { return this.getTotalLength() })
             	.attr("stroke-dashoffset", function (d) { return this.getTotalLength() });
-
 
 			svg.selectAll(".dot")
 				.data(data)
@@ -79,6 +78,15 @@ function createLineChart(name) {
 					d3.select("#linechart-tooltip").classed("hidden", false);
 				})
 				.on("mouseout", () => { d3.select("#linechart-tooltip").classed("hidden", true).classed("top", false).classed("down", false); });
+
+			svg.selectAll('.text')
+				.data(data)
+				.enter().append("text")
+					.attr("class", "text cursor-default")
+					.attr("x", (o) => (x(o.year) + (x.bandwidth() / 2) - 17))
+					.attr("y", (o) => (y(o.value) - 40))
+					.attr("dy", "1em")
+					.text((o) => { console.log(o.value); return (o.value)});
 
 			let transition	= d3.transition()
 		        .duration(500)
