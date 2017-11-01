@@ -142,7 +142,7 @@ div#root {
 					.axis line, .axis path { stroke: white; }
 					.axis text { fill: white; }
 					.line { fill: none; stroke: #fff7a8; stroke-width: 3 }
-					.dot { fill: $default-back; stroke: #fff7a8; stroke-width: 3; &.nodata { stroke: white; fill: white; }}
+					.dot { fill: $default-back; stroke: #fff7a8; stroke-width: 3; &.nodata { stroke: #b1b1b1; }}
 					.grid line { stroke: lightgrey; stroke-opacity: 0.7; shape-rendering: crispEdges; }
 					.grid path { stroke-width: 0; }
 				}
