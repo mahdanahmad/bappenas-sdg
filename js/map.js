@@ -83,7 +83,7 @@ function redrawMap(data) {
 		}
 
 
-		$('.province').mouseover(function() { $(' #map-tooltip-value ').text(mappedNilai[$(this).attr('id')]); });
+		$('.province').mouseover(function() { $(' #map-tooltip-value ').text(mappedNilai[$(this).attr('id')] || 0); });
 	} else {
 		$(' .province ').addClass('color-5');
 	}

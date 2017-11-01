@@ -114,7 +114,7 @@ div#root {
 
 				&.transparent { opacity: .25; }
 
-				$colors	: #fff7a8 #dcd99f #a1a68d #8a9287 #7a8482;
+				$colors	: #fff7a8 #dcd99f #a1a68d #8a9287 #7a8482 black;
 				@each $color in $colors {
 					$i: index($colors, $color);
 					.color-#{$i} { fill: $color; &:before { background-color: $color; }}

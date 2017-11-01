@@ -45,7 +45,7 @@ $( document ).ready(function() {
 
 	setTimeout(function() {
 		$('#chart-wrapper').height($('#root').outerHeight( true ) - $('#header').outerHeight( true ) - $('#sdg-wrapper').outerHeight( true ) - $('#indikator-wrapper').outerHeight( true ));
-		$(' #legend-container > ul ').html(_.map(['Sangat Tinggi', 'Tinggi', 'Sedang', 'Rendah', 'Sangat Rendah'], (o, i) => ("<li class='color-" + (i + 1) + "'>" + o + "</li>")).join(""));
+		$(' #legend-container > ul ').html(_.map(['Sangat Tinggi', 'Tinggi', 'Sedang', 'Rendah', 'Sangat Rendah', 'Tidak Ada Data'], (o, i) => ("<li class='color-" + (i + 1) + "'>" + o + "</li>")).join(""));
 
 		createBarChart(def_data);
 		createMap();
