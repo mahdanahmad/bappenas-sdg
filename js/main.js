@@ -1,4 +1,4 @@
-const proxyurl 		= "https://cors-anywhere.herokuapp.com/";
+const proxyurl 		= "";
 const baseURL		= "http://hub.satudata.bappenas.go.id/api/action/datastore_search?resource_id=";
 const mainURL		= baseURL + "14683ee3-f49c-4c58-a83c-593dbbe4157a";
 
@@ -32,6 +32,7 @@ let avail_inds	= [];
 let avail_data	= {};
 let ind_data	= {};
 let sgd_active	= "";
+let current_max	= 0;
 
 $( document ).ready(function() {
 
@@ -44,27 +45,28 @@ $( document ).ready(function() {
 
 	setTimeout(function() {
 		$('#chart-wrapper').height($('#root').outerHeight( true ) - $('#header').outerHeight( true ) - $('#sdg-wrapper').outerHeight( true ) - $('#indikator-wrapper').outerHeight( true ));
+		$(' #legend-container > ul ').html(_.map(['Sangat Tinggi', 'Tinggi', 'Sedang', 'Rendah', 'Sangat Rendah'], (o, i) => ("<li class='color-" + (i + 1) + "'>" + o + "</li>")).join(""));
 
 		createBarChart(def_data);
-		createMap(def_data);
+		createMap();
 
 		$.get( proxyurl + mainURL, ( data ) => {
 			avail_data	= _.chain(data).get('result.records', []).filter((o) => (o.status == 'Tersedia' && !_.isEmpty(o.resource_id))).groupBy('tujuan').value();
 			avail_inds	= _.chain(avail_data).keys().map(_.toInteger).value();
-
-			$('#ikhtisar-goals').text(_.chain(avail_data).map((o, key) => ({ tujuan: key, total: o.length })).orderBy('total', 'desc').take(5).map((o) => (sdgs_list[_.toInteger(o.tujuan - 1)])).join(', ').value());
 		});
 	}, 100);
 
 });
 
 function sdgClicked(elem, name) {
+	if (sgd_active == "") { $(' #content-overlay-notif > div ').text('Pilih indikator untuk mengaktifkan visualisasi.'); $(' select#indikator-selector ').prop('disabled', false); }
 	if (!_.isEmpty(avail_inds) && sgd_active !== name) {
 		backToMap();
 		createBarChart(def_data);
-		createMap(def_data);
-		$('#ikhtisar-container').hide();
+		redrawMap([]);
 		$('#content-overlay').show();
+		$('#legend-wrapper').hide();
+		$('#map-wrapper').addClass('transparent');
 
 		$('.sdg-container.active').removeClass('active');
 		$(elem).addClass('active');
@@ -82,19 +84,24 @@ function sdgClicked(elem, name) {
 }
 
 function indClicked(elem) {
+	backToMap();
+
 	$.get( proxyurl + baseURL + elem.value, ( data ) => {
 		let accepted_data	= _.chain(data).get('result.records', []).filter((o) => (_.indexOf(provs, o.disagregasi) >= 0)).value();
 		let shown_years		= _.chain(accepted_data).uniqBy('tahun').map('tahun').maxBy(_.toInteger).value();
 		let shown_data		= _.chain(accepted_data).filter(['tahun', shown_years]).map((o) => ({ name: o.disagregasi, value: parseFloat(o.nilai) })).value();
 
-		ind_data			= _.chain(accepted_data).groupBy('disagregasi').mapValues((o) => (_.chain(o).keyBy('tahun').mapValues((o) => (parseFloat(o.nilai))).value())).value();
+		ind_data			= _.chain(accepted_data).groupBy('disagregasi').mapValues((o) => (_.chain(o).keyBy('tahun').mapValues((d) => (_.toInteger(d.nilai))).value())).value();
+		current_max			= _.chain(accepted_data).maxBy((o) => (_.toInteger(o.nilai))).get('nilai', 0).toInteger().ceil().multiply(1.10).value();
 
 		$('#content-overlay').hide();
+		$('#legend-wrapper').show();
+		$('#map-wrapper').removeClass('transparent');
+
+		$('.capaian-nasional > span').text(_.chain(shown_data).map('value').mean().round(2).value());
+
 
 		createBarChart(_.sortBy(shown_data, 'value'));
-		createMap(shown_data);
-
-		$('#ikhtisar-provinces').text(_.chain(ind_data).map((o, key) => ({ prov: key, total: _.chain(o).values().sum().value() })).orderBy('total', 'desc').take(5).map('prov').join(', ').value());
-		$('#ikhtisar-container').show();
+		redrawMap(shown_data);
 	});
 }

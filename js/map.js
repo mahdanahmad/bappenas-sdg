@@ -1,4 +1,4 @@
-function createMap(data) {
+function createMap() {
 	d3.select("#map-container").selectAll("svg").remove();
 
 	let canvasWidth		= $('#map-container').outerWidth(true);
@@ -7,13 +7,6 @@ function createMap(data) {
 	let margin 			= { top: 0, right: 0, bottom: 0, left: 0 };
 	let width			= canvasWidth - margin.right - margin.left;
 	let height			= canvasHeight - margin.top - margin.bottom;
-
-	let minData			= _.minBy(data, 'value').value;
-	let maxData			= _.maxBy(data, 'value').value;
-	let range			= _.floor((maxData - minData) / 3);
-	let fracture		= [maxData - range, maxData - 2 * range];
-
-	let mappedNilai		= _.chain(data).keyBy('name').mapValues('value').value();
 
 	let svg = d3.select("#map-container").append("svg")
     	.attr("width", width)
@@ -36,7 +29,8 @@ function createMap(data) {
 		svg.selectAll(".state")
             .data(states.features)
             .enter().append("path")
-            .attr("class", (o) => ("province " + setProvClass(o.properties.nm_provinsi)))
+            .attr("id", (o) => (_.snakeCase(o.properties.nm_provinsi)))
+            .attr("class", (o) => ("province color-5"))
             .attr("d", path)
 			.on("mouseover", function(o) {
 				let mouse = d3.mouse(svg.node()).map( (o) => (parseInt(o)));
@@ -54,10 +48,6 @@ function createMap(data) {
 					.select("#map-tooltip-prov")
 					.text(o.properties.nm_provinsi);
 
-				tooltip
-					.select("#map-tooltip-value")
-					.text(mappedNilai[o.properties.nm_provinsi]);
-
 				d3.select("#map-tooltip").classed("hidden", false);
 
 			})
@@ -69,13 +59,33 @@ function createMap(data) {
             .attr("d", path)
             .attr("class", "province-border");
 	});
+}
 
-	function setProvClass(name) {
-		let defClass	= _.snakeCase(name) + " ";
-		switch (true) {
-			case mappedNilai[name] > fracture[0]: return defClass + "high";
-			case mappedNilai[name] > fracture[1]: return defClass + "mid";
-			default: return defClass + "low";
+function redrawMap(data) {
+	$(' .province ').removeClass((idx, className) => ((className.match (/(^|\s)color-\S+/g) || []).join(' ')) );
+
+	if (!_.isEmpty(data)) {
+		const minData		= _.minBy(data, 'value').value;
+		const maxData		= _.maxBy(data, 'value').value;
+		const range			= _.ceil((maxData - minData) / 5);
+		const fracture		= _.times(5, (i) => (_.ceil(maxData) - ((i + 1) * range)))
+		const mappedNilai	= _.chain(data).keyBy((o) => (_.snakeCase(o.name))).mapValues('value').value();
+
+		_.forEach(data, (o) => { $('path#' + _.snakeCase(o.name)).addClass(checkProvRange(o.value)); });
+
+		function checkProvRange(value) {
+			let className	= "";
+			_.forEach(fracture, (o, i) => {
+				if (value >= o && _.isEmpty(className)) { className = 'color-' + (i + 1); }
+			});
+
+			return !_.isEmpty(className) ? className : 'color-5';
 		}
+
+
+		$('.province').mouseover(function() { $(' #map-tooltip-value ').text(mappedNilai[$(this).attr('id')]); });
+	} else {
+		$(' .province ').addClass('color-5');
 	}
+
 }

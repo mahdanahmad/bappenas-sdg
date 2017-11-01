@@ -34,7 +34,7 @@ div#root {
 
         $header-high	: 50px;
 
-        #header-title { line-height: $header-high; font-size: 28px; font-family: "SF Bold"; }
+        #header-title { line-height: $header-high; font-size: 23px; font-family: "SF Bold"; }
         ul#header-menu { li { line-height: $header-high; display: inline-block; min-width: 75px; text-align: center; cursor: pointer; &:hover { background: rgba(0, 0, 0, .1)} } }
     }
 	#content-wrapper {
@@ -44,7 +44,7 @@ div#root {
 			.sdg-container {
 				width: calc(100% / 17 - 10px); display: inline-block; margin: 0px 5px; position: relative;
 				img { width: 100%; height: auto; }
-				.sdg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.5)}
+				.sdg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.7)}
 				&.active { .sdg-overlay { background: rgba(0,0,0,0); } }
 			}
 		}
@@ -70,7 +70,7 @@ div#root {
 					&.down:after { top: 100%; border-top-color: rgba(0,0,0,.6); }
 				}
 				svg {
-					.bar { fill: #a1a68d; cursor: pointer; &:hover { fill: #fff7a8; }}
+					.bar { fill: #a1a68d; cursor: pointer; &:hover, &.active { fill: #fff7a8; }}
 					g { text { fill: white; transform: translate(-7.5px); }}
 				}
 			}
@@ -90,47 +90,79 @@ div#root {
 						#map-tooltip-prov { margin: 0px 10px; }
 					}
 					svg {
-						.province {
-							cursor: pointer;
-							&.high { fill: #fff7a8; }
-							&.mid { fill: #c2c397; }
-							&.low { fill: #a1a68d; }
-						}
+						.province { cursor	: pointer; }
 						.province-border { fill: none; stroke: $default-back; stroke-linejoin: round; stroke-width: 1px; }
 					}
 				}
-				#ikhtisar-container {
-					width: 75%; position: absolute; @include clearfix(); bottom: 20px;
-					.ikhtisar-wrapper {
-						padding: 0px 1%; width: 48%; display: inline-block; float: left;
-						label { display: block; margin-bottom: 5px; font-family: "SF Bold"; }
-						span {  }
+				#image-container {
+					width: 25%; position: absolute; bottom: 15px; right: 0px;
+					img { width: 50%; height: auto; &#logo-bappenas { position: relative; top: 10px; }}
+				}
+				#legend-wrapper {
+					position: absolute; bottom: 20px; left: 20px;
+					#legend-container {
+						border: 1px solid; padding: 20px; border-radius: 5px; margin-top: 0px;
+						span { margin-right: 15px; }
+						ul {
+							display: inline-block;
+							li { display: inline-block; font-size: 13px; }
+							li:before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 10px; position: relative; top: 1px; }
+							li:not(:last-child) { margin-right: 15px; }
+						}
 					}
 				}
-				img { width: 20%; height: auto; position: absolute; bottom: 15px; right: 0px; }
+
+				&.transparent { opacity: .25; }
+
+				$colors	: #fff7a8 #dcd99f #a1a68d #8a9287 #7a8482;
+				@each $color in $colors {
+					$i: index($colors, $color);
+					.color-#{$i} { fill: $color; &:before { background-color: $color; }}
+				}
 			}
 			#detil-wrapper {
 				// width: calc(100% - 400px);
 				width: 75%;
 				height: 100%; position: relative;
-				#back-button { background: #262c30; position: absolute; right: 0px; top: -50px; padding: 12px 20px; }
+				#back-button { background: #262c30; position: absolute; right: 0px; top: 42.5%; padding: 12px 20px; z-index: 90; }
 				#province-name { font-size: 25px; padding: 10px 25px; font-family: "SF Bold"; }
-				#linechart-container { width: 100%; }
+				#linechart-container {
+					width: 100%; position: relative;
+					#linechart-tooltip {
+						position: absolute; width: 150px; text-align: center; background-color: rgba(0,0,0,.6); line-height: 28px; border-radius: 8px;
+						&:after {
+							position: absolute; left: 50%; height: 0; width: 0; border: solid transparent;
+							content: " "; pointer-events: none;
+							border-width: 6px; margin-left: -6px; z-index: 1000;
+							bottom: 100%; border-bottom-color: rgba(0,0,0,.6);
+						}
+					}
+				}
 				svg {
 					.axis line, .axis path { stroke: white; }
 					.axis text { fill: white; }
 					.line { fill: none; stroke: #fff7a8; stroke-width: 3 }
-					.dot { fill: $default-back; stroke: #fff7a8; stroke-width: 3; }
+					.dot { fill: $default-back; stroke: #fff7a8; stroke-width: 3; &.nodata { stroke: white; fill: white; }}
+					.grid line { stroke: lightgrey; stroke-opacity: 0.7; shape-rendering: crispEdges; }
+					.grid path { stroke-width: 0; }
 				}
+				.capaian-nasional { position: absolute; right: 0px; top: 0px; }
 			}
 			#content-overlay {
-				width: 100%; height: 100%; position: absolute; top: 0px; left: 0px; background: rgba(0,0,0,.6);
+				width: 100%; height: 100%; position: absolute; top: 0px; left: 0px; background: rgba(0,0,0,0);
 				#content-overlay-notif {
-					margin: 15% auto 0; width: 25%;
+					margin: 15% auto 0; width: 12.5%;
 					img { width: 25%; height: auto; margin: auto; display: block; }
-					div { text-align: center; width: 100%; margin-top: 15px; }
+					div { text-align: center; width: 100%; margin-top: 15px; font-size: 16px; }
 				}
+			}
+
+			.capaian-nasional {
+				span { font-size: 40px; font-family: "SF Bold"; letter-spacing: -3px; }
+				label { margin-left: 5px; }
 			}
 		}
 	}
 }
+
+.ui-tooltip { background: #262c30; color: white; border: none!important; border-radius: 5px; }

@@ -2,6 +2,8 @@ let duration	= 600;
 
 function createLineChart(name) {
 	$('#province-name').text(name);
+	$('rect').removeClass('active');
+	$('rect#' + _.snakeCase(name)).addClass('active');
 	d3.select("#linechart-container").selectAll("svg").remove();
 
 	$('#map-wrapper').hide(duration, () => {
@@ -13,16 +15,15 @@ function createLineChart(name) {
 
 			$('#linechart-container').height(canvasHeight);
 
-			let margin 			= { top: 10, right: 25, bottom: 50, left: 100 };
+			let margin 			= { top: 10, right: 100, bottom: 75, left: 100 };
 			let width			= canvasWidth - margin.right - margin.left;
 			let height			= canvasHeight - margin.top - margin.bottom;
 
 			let labels			= ["2010", "2011", "2012", "2013", "2014", "2015", "2016"];
-
-			let data			= _.times(labels.length, (i) => ({ year: labels[i], value: (ind_data[name][labels[i]] || null) }));
+			let data			= _.map(labels, (o) => ({ year: o, value: (ind_data[name][o] || null) }));
 
 			let x				= d3.scaleBand().range([0, width]).domain(labels);
-			let y				= d3.scaleLinear().range([height, 0]).domain([0, d3.max(data, (o) => (o.value)) + 1]);
+			let y				= d3.scaleLinear().range([height, 0]).domain([0, current_max]);
 
 			let line 			= d3.line()
 				.x((o) => (x(o.year) + (x.bandwidth() / 2)))
@@ -42,22 +43,42 @@ function createLineChart(name) {
 
 			svg.append("g")
 				.attr("class", "y axis")
-				.call(d3.axisLeft(y));
+				.call(d3.axisLeft(y).ticks(5));
+
+			svg.append("g")
+			.attr("class", "grid")
+			// .attr("transform", "translate(0," + height + ")")
+			.call(d3.axisLeft(y).ticks(5).tickSize(-width).tickFormat(""));
 
 			svg.append("path")
 			    .datum(data)
-			    .attr("class", "line")
+			    .attr("class", 'line')
 			    .attr("d", line)
-				.attr("stroke-dasharray", function(d) { return this.getTotalLength() })
-            	.attr("stroke-dashoffset", function(d) { return this.getTotalLength() });
+				.attr("stroke-dasharray", function (d) { return this.getTotalLength() })
+            	.attr("stroke-dashoffset", function (d) { return this.getTotalLength() });
+
 
 			svg.selectAll(".dot")
 				.data(data)
 				.enter().append("circle")
-					.attr("class", "dot")
+					.attr("class", (o) => ("dot " + (_.isNil(o.value) ? 'nodata' : '')))
 					.attr("cx", (o) => (x(o.year) + (x.bandwidth() / 2)))
 					.attr("cy", height)
-					.attr("r", 7);
+					.attr("r", 7)
+				.on("mouseover", function(o) {
+					let xPosition	= _.toInteger(d3.select(this).attr("cx")) + 25;
+					let yPosition	= _.toInteger(d3.select(this).attr("cy")) + 30;
+
+					d3.select("#linechart-tooltip")
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						// .select("#linechart-tooltip-value")
+						.text(o.value ? ("Nilai: " + o.value) : "Data tidak tersedia");
+
+					d3.select("#linechart-tooltip").classed((d3.select(this).attr("y") < 28 ? "top" : "down"), true);
+					d3.select("#linechart-tooltip").classed("hidden", false);
+				})
+				.on("mouseout", () => { d3.select("#linechart-tooltip").classed("hidden", true).classed("top", false).classed("down", false); });
 
 			let transition	= d3.transition()
 		        .duration(500)
@@ -74,4 +95,4 @@ function createLineChart(name) {
 
 };
 
-function backToMap() { $('#detil-wrapper').hide(duration, () => {  $('#map-wrapper').fadeIn(0); }); }
+function backToMap() { $('rect').removeClass('active'); $('#detil-wrapper').hide(duration, () => {  $('#map-wrapper').fadeIn(0); }); }

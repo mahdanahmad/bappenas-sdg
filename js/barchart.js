@@ -28,13 +28,13 @@ function createBarChart(data) {
 	svg.selectAll(".bar")
 			.data(data)
 	    .enter().append("rect")
+			.attr("id", (o) => (_.snakeCase(o.name)))
 			.attr("class", "bar")
 			// .attr("width", (o) => (x(o.value)))
 			.attr("width", 0)
 			.attr("y", (o) => (y(o.name)))
 			.attr("height", y.bandwidth())
 		.on("mouseover", function(o) {
-
 			let xPosition	= d3.select(this).attr("width") / 2 + margin.left - 50;
 			let yPosition	= parseFloat(d3.select(this).attr("y") - (d3.select(this).attr("y") < 28 ? -(y.bandwidth() * 2) : y.bandwidth()));
 
