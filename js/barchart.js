@@ -57,7 +57,7 @@ function createBarChart(data) {
         .ease(d3.easeLinear);
 
 	svg.selectAll(".bar").transition(transition)
-        .attr("width", (o) => (x(o.value)));
+        .attr("width", (o) => (x(o.value) || 0));
 
 	svg.append("g").call(d3.axisLeft(y).tickSize(0));
 }

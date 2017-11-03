@@ -65,25 +65,28 @@ function redrawMap(data) {
 	$(' .province ').removeClass((idx, className) => ((className.match (/(^|\s)color-\S+/g) || []).join(' ')) );
 
 	if (!_.isEmpty(data)) {
-		const minData		= _.minBy(data, 'value').value;
-		const maxData		= _.maxBy(data, 'value').value;
-		const range			= _.ceil((maxData - minData) / 5);
-		const fracture		= _.times(5, (i) => (_.ceil(maxData) - ((i + 1) * range)))
-		const mappedNilai	= _.chain(data).keyBy((o) => (_.snakeCase(o.name))).mapValues('value').value();
+		const minData		= _.chain(data).minBy('value').get('value', null).value();
+		const maxData		= _.chain(data).maxBy('value').get('value', null).value();
 
-		_.forEach(data, (o) => { $('path#' + _.snakeCase(o.name)).addClass(checkProvRange(o.value)); });
+		if (!_.isNil(minData) && !_.isNil(maxData)) {
+			const range			= _.ceil((maxData - minData) / 5);
+			const fracture		= _.times(5, (i) => (_.ceil(maxData) - ((i + 1) * range)))
+			const mappedNilai	= _.chain(data).keyBy((o) => (_.snakeCase(o.name))).mapValues('value').value();
 
-		function checkProvRange(value) {
-			let className	= "";
-			_.forEach(fracture, (o, i) => {
-				if (value >= o && _.isEmpty(className)) { className = 'color-' + (i + 1); }
-			});
+			_.forEach(data, (o) => { $('path#' + _.snakeCase(o.name)).addClass(checkProvRange(o.value)); });
 
-			return !_.isEmpty(className) ? className : 'color-5';
+			function checkProvRange(value) {
+				let className	= "";
+				_.forEach(fracture, (o, i) => {
+					if (value >= o && _.isEmpty(className)) { className = 'color-' + (i + 1); }
+				});
+
+				return !_.isEmpty(className) ? className : 'color-5';
+			}
+			$('.province').mouseover(function() { $(' #map-tooltip-value ').text(mappedNilai[$(this).attr('id')] || 0); });
+		} else {
+			$('.province').mouseover(function() { $(' #map-tooltip-value ').text(0); });
 		}
-
-
-		$('.province').mouseover(function() { $(' #map-tooltip-value ').text(mappedNilai[$(this).attr('id')] || 0); });
 	} else {
 		$(' .province ').addClass('color-5');
 	}

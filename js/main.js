@@ -99,8 +99,7 @@ function indClicked(elem) {
 		$('#map-wrapper').removeClass('transparent');
 
 		$('.capaian-nasional > span').text(_.chain(shown_data).map('value').mean().round(2).value());
-
-
+		
 		createBarChart(_.sortBy(shown_data, 'value'));
 		redrawMap(shown_data);
 	});

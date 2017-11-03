@@ -86,7 +86,7 @@ function createLineChart(name) {
 					.attr("x", (o) => (x(o.year) + (x.bandwidth() / 2) - 17))
 					.attr("y", (o) => (y(o.value) - 40))
 					.attr("dy", "1em")
-					.text((o) => { console.log(o.value); return (o.value)});
+					.text((o) => (o.value));
 
 			let transition	= d3.transition()
 		        .duration(500)
