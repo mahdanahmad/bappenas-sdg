@@ -49,24 +49,28 @@ div#root {
 			}
 		}
 		#indikator-wrapper {
-			width: 800px; padding: 10px 15px; background: #262c30; @include clearfix();
+			width: 800px; padding: 10px 15px; background: $indicator-back; font-size: 12px; @include clearfix();
 			span#selected-sdg { line-height: 30px; }
-			select#indikator-selector { width: 400px; height: 30px; background-color: #d6d6d6; }
+			select#indikator-selector { width: 400px; height: 30px; background-color: #d6d6d6; font-size: 10px; }
 		}
 		#chart-wrapper {
 			position: relative; width: 100%; @include clearfix();
 			#barchart-container {
 				// width: 400px;
 				width: 25%;
-				height: 100%; background: #3a3f43; overflow: auto; position: relative; display: inline-block;
+				height: 100%; background: $barchart-back; overflow: auto; position: relative; display: inline-block;
 				#barchart-tooltip {
 					&.top:after { bottom: 100%; border-bottom-color: rgba(0,0,0,.6); }
 					&.down:after { top: 100%; border-top-color: rgba(0,0,0,.6); }
 				}
 				svg {
-					.bar { fill: #a1a68d; cursor: pointer; &:hover, &.active { fill: #fff7a8; }}
+					.bar { fill: $bar-color; cursor: pointer; &:hover, &.active { fill: $line-color; }}
+					line#meanline { stroke: $meanline-color; stroke-width: 2px; }
+					.axis line, .axis path { stroke: #8a9287; }
+					.axis text { fill: #8a9287; }
 					g { text { fill: white; transform: translate(-7.5px); font-size: 8px; }}
 				}
+				&.national { display: none; }
 			}
 			#map-wrapper {
 				// width: calc(100% - 400px);
@@ -113,25 +117,28 @@ div#root {
 				width: 75%;
 				height: 100%; position: relative;
 				#back-button { background: #262c30; position: absolute; right: 0px; top: 42.5%; padding: 12px 20px; z-index: 90; }
-				#province-name { font-size: 25px; padding: 10px 25px; font-family: "SF Bold"; }
+				#province-name { font-size: 20px; padding: 10px 25px; font-family: "SF Bold"; }
 				#linechart-container {
 					width: 100%; position: relative;
 					#linechart-tooltip {
-						&:after {
-							bottom: 100%; border-bottom-color: rgba(0,0,0,.6);
-						}
+						&:after { bottom: 100%; border-bottom-color: rgba(0,0,0,.6); }
+					}
+					svg {
+						.axis line, .axis path { stroke: white; }
+						.axis text { fill: white; }
+						.line { fill: none; stroke: $line-color; stroke-width: 3 }
+						.dot { fill: $default-back; stroke: $line-color; stroke-width: 3; &.nodata { stroke: #b1b1b1; }}
+						.grid line { stroke: lightgrey; stroke-opacity: 0.7; shape-rendering: crispEdges; }
+						.grid path { stroke-width: 0; }
+						.text { fill: white; font-size: 25px; font-family: "SF Bold"; }
 					}
 				}
-				svg {
-					.axis line, .axis path { stroke: white; }
-					.axis text { fill: white; }
-					.line { fill: none; stroke: #fff7a8; stroke-width: 3 }
-					.dot { fill: $default-back; stroke: #fff7a8; stroke-width: 3; &.nodata { stroke: #b1b1b1; }}
-					.grid line { stroke: lightgrey; stroke-opacity: 0.7; shape-rendering: crispEdges; }
-					.grid path { stroke-width: 0; }
-					.text { fill: white; font-size: 25px; font-family: "SF Bold"; }
-				}
 				.capaian-nasional { position: absolute; right: 0px; top: 0px; }
+				&.national {
+					width: 100%;
+					#back-button { display: none; }
+					.capaian-nasional { display: none; }
+				}
 			}
 			#content-overlay {
 				width: 100%; height: 100%; position: absolute; top: 0px; left: 0px; background: rgba(0,0,0,0);
@@ -143,8 +150,8 @@ div#root {
 			}
 
 			.capaian-nasional {
-				span { font-size: 40px; font-family: "SF Bold"; letter-spacing: -3px; }
-				label { margin-left: 5px; }
+				span { font-size: 32px; font-family: "SF Bold"; letter-spacing: -2px; }
+				label { margin-left: 5px; font-size: 12px; }
 			}
 
 			.tooltips {

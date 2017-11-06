@@ -1,6 +1,6 @@
 let duration	= 600;
 
-function createLineChart(name) {
+function createLineChart(name, state, nasional_data) {
 	$('#province-name').text(name);
 	$('rect').removeClass('active');
 	$('rect#' + _.snakeCase(name)).addClass('active');
@@ -10,7 +10,7 @@ function createLineChart(name) {
 		$('#detil-wrapper').fadeIn(0);
 
 		setTimeout(function() {
-			let canvasWidth		= $('#linechart-container').outerWidth(true);
+			let canvasWidth		= $( (state == 'nasional' ? '#chart-wrapper' : '#linechart-container') ).outerWidth(true);
 			let canvasHeight	= $('#detil-wrapper').outerHeight(true) - $('#province-name').outerHeight(true);;
 
 			$('#linechart-container').height(canvasHeight);
@@ -20,10 +20,10 @@ function createLineChart(name) {
 			let height			= canvasHeight - margin.top - margin.bottom;
 
 			let labels			= ["2010", "2011", "2012", "2013", "2014", "2015", "2016"];
-			let data			= _.map(labels, (o) => ({ year: o, value: (ind_data[name][o] || null) }));
+			let data			= _.map(labels, (o) => ({ year: o, value: ((state == 'nasional' ? nasional_data[o]: ind_data[name][o]) || null) }));
 
 			let x				= d3.scaleBand().range([0, width]).domain(labels);
-			let y				= d3.scaleLinear().range([height, 0]).domain([0, current_max]);
+			let y				= d3.scaleLinear().range([height, 0]).domain([0, (state == 'nasional' ? _.chain(nasional_data).values().max().ceil().multiply(1.10).value(): current_max)]);
 
 			let line 			= d3.line()
 				.x((o) => (x(o.year) + (x.bandwidth() / 2)))

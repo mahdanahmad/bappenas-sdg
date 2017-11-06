@@ -70,6 +70,7 @@ function sdgClicked(elem, name) {
 		$('#map-wrapper').addClass('transparent');
 
 		$('.sdg-container.active').removeClass('active');
+		$('.national').removeClass('national');
 		$(elem).addClass('active');
 		$('#selected-sdg').text('Goal ' + (_.indexOf(sdgs_list, name) + 1) + ': ' + name);
 
@@ -85,23 +86,35 @@ function sdgClicked(elem, name) {
 }
 
 function indClicked(elem) {
-	backToMap();
-
 	$.get( proxyurl + baseURL + elem.value + limitParam, ( data ) => {
 		let accepted_data	= _.chain(data).get('result.records', []).filter((o) => (_.indexOf(provs, o.disagregasi) >= 0)).value();
 		let shown_years		= _.chain(accepted_data).uniqBy('tahun').map('tahun').maxBy(_.toInteger).value();
-		let shown_data		= _.chain(accepted_data).filter(['tahun', shown_years]).map((o) => ({ name: o.disagregasi, value: _.round(parseFloat(o.nilai), 2) })).value();
+		let shown_data		= _.chain(accepted_data).filter(['tahun', shown_years]).map((o) => ({ name: o.disagregasi, value: _.round(parseFloat(o.nilai || o.data), 2) })).value();
 
 		ind_data			= _.chain(accepted_data).groupBy('disagregasi').mapValues((o) => (_.chain(o).keyBy('tahun').mapValues((d) => (parseFloat(d.nilai))).value())).value();
 		current_max			= _.chain(accepted_data).maxBy((o) => (_.toInteger(o.nilai))).get('nilai', 0).toInteger().ceil().multiply(1.10).value();
 
 		$('#content-overlay').hide();
-		$('#legend-wrapper').show();
 		$('#map-wrapper').removeClass('transparent');
 
-		$('.capaian-nasional > span').text(_.chain(shown_data).map('value').mean().round(2).value());
+		if (_.isEmpty(shown_data)) {
+			let nasional_data	= _.chain(data).get('result.records', []).filter((o) => (o.disagregasi.toLowerCase() == 'indonesia')).keyBy('tahun').mapValues((o) => (_.round(parseFloat(o.nilai || o.data), 2))).value();
 
-		createBarChart(_.sortBy(shown_data, 'value'));
-		redrawMap(shown_data);
+			$('#detil-wrapper').addClass('national');
+			$('#barchart-container').addClass('national');
+
+			createLineChart('Indonesia', 'nasional', nasional_data);
+		} else {
+			$('.national').removeClass('national');
+			backToMap();
+			$('#legend-wrapper').show();
+
+			let capaian			= _.chain(shown_data).map('value').mean().round(2).value();
+			$('.capaian-nasional > span').text(capaian);
+
+			createBarChart(_.sortBy(shown_data, 'value'), capaian);
+			redrawMap(shown_data);
+		}
+
 	});
 }
