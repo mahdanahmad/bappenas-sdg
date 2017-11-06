@@ -17,7 +17,7 @@ function createMap() {
 
 		let states	= topojson.feature(idn, idn.objects.map);
 		let projection = d3.geoEquirectangular()
-            .scale(1500)
+            .scale(width + 225)
             .rotate([-120, 0])
             .translate([(width / 2) + 55, (height / 2) - 50]);
 		let path = d3.geoPath().projection(projection);

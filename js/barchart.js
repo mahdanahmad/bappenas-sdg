@@ -4,9 +4,9 @@ function createBarChart(data) {
 	let canvasWidth		= $('#barchart-container').outerWidth(true);
 	let canvasHeight	= $('#barchart-container').outerHeight(true);
 
-	let provHeight		= 20;
+	let provHeight		= 16;
 
-	let margin 			= { top: 15, right: 25, bottom: 15, left: 150 };
+	let margin 			= { top: 15, right: 25, bottom: 15, left: 125 };
 	let width			= canvasWidth - margin.right - margin.left;
 	let height			= provHeight * data.length;
 	// let height			= canvasHeight - margin.top - margin.bottom;
@@ -35,8 +35,8 @@ function createBarChart(data) {
 			.attr("y", (o) => (y(o.name)))
 			.attr("height", y.bandwidth())
 		.on("mouseover", function(o) {
-			let xPosition	= d3.select(this).attr("width") / 2 + margin.left - 50;
-			let yPosition	= parseFloat(d3.select(this).attr("y") - (d3.select(this).attr("y") < 28 ? -(y.bandwidth() * 2) : y.bandwidth()));
+			let xPosition	= d3.select(this).attr("width") / 2 + margin.left - 75;
+			let yPosition	= parseFloat(d3.select(this).attr("y") - (d3.select(this).attr("y") < 28 ? -(y.bandwidth() * 2) - 10 : (y.bandwidth() + 20)));
 
 			d3.select("#barchart-tooltip")
 				.style("left", xPosition + "px")

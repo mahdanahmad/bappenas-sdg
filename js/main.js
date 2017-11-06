@@ -1,6 +1,7 @@
 const proxyurl 		= "";
 const baseURL		= "http://hub.satudata.bappenas.go.id/api/action/datastore_search?resource_id=";
 const mainURL		= baseURL + "14683ee3-f49c-4c58-a83c-593dbbe4157a";
+const limitParam	= '&limit=1000';
 
 const defaultOpt	= "<option value='' disabled selected hidden>Pilih Indikator</option>";
 const noOpt			= "<option value='' disabled>Tidak Ada data tersedia untuk tujuan ini</option>";
@@ -50,7 +51,7 @@ $( document ).ready(function() {
 		createBarChart(def_data);
 		createMap();
 
-		$.get( proxyurl + mainURL, ( data ) => {
+		$.get( proxyurl + mainURL + limitParam, ( data ) => {
 			avail_data	= _.chain(data).get('result.records', []).filter((o) => (o.status == 'Tersedia' && !_.isEmpty(o.resource_id))).groupBy('tujuan').value();
 			avail_inds	= _.chain(avail_data).keys().map(_.toInteger).value();
 		});
@@ -86,10 +87,10 @@ function sdgClicked(elem, name) {
 function indClicked(elem) {
 	backToMap();
 
-	$.get( proxyurl + baseURL + elem.value, ( data ) => {
+	$.get( proxyurl + baseURL + elem.value + limitParam, ( data ) => {
 		let accepted_data	= _.chain(data).get('result.records', []).filter((o) => (_.indexOf(provs, o.disagregasi) >= 0)).value();
 		let shown_years		= _.chain(accepted_data).uniqBy('tahun').map('tahun').maxBy(_.toInteger).value();
-		let shown_data		= _.chain(accepted_data).filter(['tahun', shown_years]).map((o) => ({ name: o.disagregasi, value: parseFloat(o.nilai) })).value();
+		let shown_data		= _.chain(accepted_data).filter(['tahun', shown_years]).map((o) => ({ name: o.disagregasi, value: _.round(parseFloat(o.nilai), 2) })).value();
 
 		ind_data			= _.chain(accepted_data).groupBy('disagregasi').mapValues((o) => (_.chain(o).keyBy('tahun').mapValues((d) => (parseFloat(d.nilai))).value())).value();
 		current_max			= _.chain(accepted_data).maxBy((o) => (_.toInteger(o.nilai))).get('nilai', 0).toInteger().ceil().multiply(1.10).value();
@@ -99,7 +100,7 @@ function indClicked(elem) {
 		$('#map-wrapper').removeClass('transparent');
 
 		$('.capaian-nasional > span').text(_.chain(shown_data).map('value').mean().round(2).value());
-		
+
 		createBarChart(_.sortBy(shown_data, 'value'));
 		redrawMap(shown_data);
 	});
