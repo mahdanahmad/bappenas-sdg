@@ -91,9 +91,6 @@ function indClicked(elem) {
 		let shown_years		= _.chain(accepted_data).uniqBy('tahun').map('tahun').maxBy(_.toInteger).value();
 		let shown_data		= _.chain(accepted_data).filter(['tahun', shown_years]).map((o) => ({ name: o.disagregasi, value: _.round(parseFloat(o.nilai || o.data), 2) })).value();
 
-		ind_data			= _.chain(accepted_data).groupBy('disagregasi').mapValues((o) => (_.chain(o).keyBy('tahun').mapValues((d) => (parseFloat(d.nilai))).value())).value();
-		current_max			= _.chain(accepted_data).maxBy((o) => (_.toInteger(o.nilai))).get('nilai', 0).toInteger().ceil().multiply(1.10).value();
-
 		$('#content-overlay').hide();
 		$('#map-wrapper').removeClass('transparent');
 
@@ -105,6 +102,9 @@ function indClicked(elem) {
 
 			createLineChart('Indonesia', 'nasional', nasional_data);
 		} else {
+			ind_data			= _.chain(accepted_data).groupBy('disagregasi').mapValues((o) => (_.chain(o).keyBy('tahun').mapValues((d) => (_.round(parseFloat(d.nilai), 2))).value())).value();
+			current_max			= _.chain(accepted_data).maxBy((o) => (_.toInteger(o.nilai))).get('nilai', 0).toInteger().ceil().multiply(1.10).value();
+
 			$('.national').removeClass('national');
 			backToMap();
 			$('#legend-wrapper').show();
