@@ -103,7 +103,7 @@ function indClicked(elem) {
 			createLineChart('Indonesia', 'nasional', nasional_data);
 		} else {
 			ind_data			= _.chain(accepted_data).groupBy('disagregasi').mapValues((o) => (_.chain(o).keyBy('tahun').mapValues((d) => (_.round(parseFloat(d.nilai), 2))).value())).value();
-			current_max			= _.chain(accepted_data).maxBy((o) => (_.toInteger(o.nilai))).get('nilai', 0).toInteger().ceil().multiply(1.10).value();
+			current_max			= _.chain(accepted_data).map((o) => (parseInt(o.nilai))).max().ceil().multiply(1.10).value();
 
 			$('.national').removeClass('national');
 			backToMap();
